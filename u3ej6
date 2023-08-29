@@ -1,0 +1,35 @@
+from colaEncadenada import Cola
+from random import randint
+
+if __name__ == '__main__':
+    cola= Cola()
+    reloj=0
+    tiempo_max=-999
+    ultimo_cliente=0
+    libre=0
+    while reloj<30:
+        print(f'reloj {reloj}')
+        if (reloj-ultimo_cliente>=2) or (ultimo_cliente==0 and reloj<2):
+            rand=randint(1,2)
+            print(f'random {rand}')
+            if rand==2:
+                cola.insertar(reloj)
+                ultimo_cliente=reloj
+                print(f'llega cliente en el minuto {reloj}')
+                
+        if reloj>=libre:
+            if not cola.vacia():
+                aux=cola.suprimir()
+                print(f'se atiende a cliente con {reloj-aux} minutos de espera')
+                
+                if (reloj-aux)>tiempo_max:
+                    tiempo_max=(reloj-aux)
+                
+                libre=reloj+5
+            else:
+                print('cola vacia')
+        reloj+=1
+        
+        
+        
+    print(f'el tiempo máximo de espera de los clientes en la cola es {tiempo_max}')
