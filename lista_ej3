@@ -1,0 +1,36 @@
+from listaEncadenadaxContenido import ListaPorContenido
+import csv
+class Incendio:
+    __prov = str()
+    __sup=float()
+    
+    def __init__(self, p, s):
+        self.__prov= p
+        self.__sup= s
+    
+    def __str__(self):
+        return f'Provincia: {self.__prov}; Superficie afectada: {self.__sup}'
+    
+    def getSup(self):
+        return self.__sup
+    
+    def __lt__(self,otro):
+        return self.__sup < otro.getSup()
+            
+if __name__== '__main__':
+    archivo = open('superficie-afectada-por-incendios-forestales-en-el-pais.csv')
+    reader = csv.reader(archivo, delimiter = ';')
+    cabecera = True
+    for fila in reader:
+        if cabecera :
+            lista = ListaPorContenido()
+            cabecera=False
+        else:
+            if fila[6]:
+                lista.Insertar(Incendio(fila[3], float(fila[6])))
+            else:
+                lista.Insertar(Incendio(fila[3], 0))
+    lista.Recorrer()
+    print('\nORDENADO')
+    lista.Ordenar()
+    lista.Recorrer()
