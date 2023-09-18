@@ -148,6 +148,54 @@ class Arbol:
         nivel_der = self.Nivel(nodo.getDer(), valor, nivel_actual + 1)
         return nivel_der
     
+    def Hijo(self, nodo, padre_valor, hijo_valor):
+        if nodo is None:
+            return False
+        if nodo.getValor() == padre_valor:
+            if nodo.getIzq() and nodo.getIzq().getValor() == hijo_valor:
+                return True
+            if nodo.getDer() and nodo.getDer().getValor() == hijo_valor:
+                return True
+        return self.Hijo(nodo.getIzq(), padre_valor, hijo_valor) or self.Hijo(nodo.getDer(), padre_valor, hijo_valor)
+
+    def Padre(self, nodo, padre, hijo_valor):
+        
+        if nodo is None:
+            return None  # Valor no encontrado
+        if nodo.getValor() == hijo_valor:
+            return padre.getValor() if padre else None
+        izquierda = self.Padre(nodo.getIzq(), nodo, hijo_valor)
+        if izquierda:
+            return izquierda
+        derecha = self.Padre(nodo.getDer(), nodo, hijo_valor)
+        return derecha
+
+
+    def Camino(self, inicio_valor, final_valor):
+        camino = self.encontrarCamino(self.__cabeza, [], inicio_valor, final_valor)
+        if camino:
+            return camino
+
+    def encontrarCamino(self, nodo, camino_actual, inicio_valor, final_valor):
+        if nodo is None:
+            return None
+        camino_actual.append(nodo.getValor())
+        if nodo.getValor() == final_valor:
+            return camino_actual
+        izquierda = self.encontrarCamino(nodo.getIzq(), camino_actual.copy(), inicio_valor, final_valor)
+        if izquierda:
+            return izquierda
+        derecha = self.encontrarCamino(nodo.getDer(), camino_actual.copy(), inicio_valor, final_valor)
+        return derecha
+
+    def Altura(self, nodo):
+        if nodo is None:
+            return 0
+        izquierda = self.Altura(nodo.getIzq())
+        derecha = self.Altura(nodo.getDer())
+        return max(izquierda, derecha) + 1
+    
+    
     def preOrden(self, nodo):
         if nodo is not None:
             self.preOrden(nodo.getIzq())
@@ -156,7 +204,7 @@ class Arbol:
 if __name__== '__main__':
     a=Arbol()
     print(a.getCabeza())
-    a.insertar(1)
+    a.insertar(12)
     a.insertar(5)
     a.insertar(15)
     a.insertar(3)
@@ -167,3 +215,9 @@ if __name__== '__main__':
     a.suprimir(1)
     a.preOrden(a.getCabeza())
     a.buscar(a.getCabeza(),5)
+    print(f'Hoja:  {a.Hoja(a.getCabeza(),20)}')
+    print(f'Nivel:  {a.Nivel(a.getCabeza(),15,1)}')
+    print(f'Hijo:  {a.Hijo(a.getCabeza(),12,15)}')
+    print(f'Padre:  {a.Padre(a.getCabeza(),20,3)}')
+    print(f'Camino:  {a.Camino(5,20)}')
+    print(f'Altura:  {a.Altura(a.getCabeza())}')
