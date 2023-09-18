@@ -1,0 +1,82 @@
+class Nodo:
+    __valor = int()
+    __der = object()
+    __izq = object()
+    
+    def __init__(self, dato):
+        self.__valor = dato
+        self.__der = None
+        self.__izq = None
+        
+    def setDerecha(self, der):
+        self.__der = der
+    
+    def setIzquierda(self, izq):
+        self.__izq = izq
+    
+    def getDerecha(self):
+        return self.__der
+    
+    def getIzquierda(self):
+        return self.__izq
+    
+    def getValor(self):
+        return self.__valor
+    
+class Arbol:
+    __cabeza = None
+    
+    def __init__(self):
+        self.__cabeza = None
+    
+    def getCabeza(self):
+        return self.__cabeza
+    """
+    def insertar(self, X, aux):
+        if aux is None:
+            nuevo_nodo= Nodo(X)
+            aux = nuevo_nodo
+            
+        else:
+            if X == aux.getValor():
+                print('El nodo ya existe')
+            else:
+                if X < aux.getValor():
+                    self.insertar(X, aux.getIzquierda())
+                else:
+                    if X > aux.Valor():
+                        self.insertar(X, aux.getDerecha())
+    """
+    def insertar(self, X, aux):
+        if aux is None:
+            nuevo_nodo = Nodo(X)
+            if self.__cabeza is None:
+                self.__cabeza = nuevo_nodo
+            
+        else:
+            if X == aux.getValor():
+                print('El nodo ya existe')
+            elif X < aux.getValor():
+                aux.setIzquierda(self.insertar(X, aux.getIzquierda()))
+            else:
+                aux.setDerecha(self.insertar(X, aux.getDerecha()))
+       
+    
+    
+    def recorrer(self, nodo):
+        if nodo is not None:
+            self.recorrer(nodo.getIzquierda())
+            print(nodo.getValor())
+            self.recorrer(nodo.getDerecha())
+    
+if __name__== '__main__':
+    a=Arbol()
+    print(a.getCabeza())
+    a.insertar(10, a.getCabeza())
+    a.recorrer(a.getCabeza())
+    a.insertar(5, a.getCabeza())
+    a.insertar(15, a.getCabeza())
+    a.insertar(1, a.getCabeza())
+    a.insertar(20, a.getCabeza())
+    print('--')
+    a.recorrer(a.getCabeza())
