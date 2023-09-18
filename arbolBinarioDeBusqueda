@@ -8,20 +8,23 @@ class Nodo:
         self.__der = None
         self.__izq = None
         
-    def setDerecha(self, der):
+    def setDer(self, der):
         self.__der = der
     
-    def setIzquierda(self, izq):
+    def setIzq(self, izq):
         self.__izq = izq
     
-    def getDerecha(self):
+    def getDer(self):
         return self.__der
     
-    def getIzquierda(self):
+    def getIzq(self):
         return self.__izq
     
     def getValor(self):
         return self.__valor
+    
+    def setValor(self, X):
+        self.__valor=X
     
 class Arbol:
     __cabeza = None
@@ -46,7 +49,7 @@ class Arbol:
                 else:
                     if X > aux.Valor():
                         self.insertar(X, aux.getDerecha())
-    """
+    
     def insertar(self, X, aux):
         if aux is None:
             nuevo_nodo = Nodo(X)
@@ -60,23 +63,107 @@ class Arbol:
                 aux.setIzquierda(self.insertar(X, aux.getIzquierda()))
             else:
                 aux.setDerecha(self.insertar(X, aux.getDerecha()))
-       
+    """
+    def insertar(self, objeto):
+        if self.__cabeza is None:
+            nodo=Nodo(objeto)
+            self.__cabeza=nodo
+        else:
+            self.insertarRecursion(self.__cabeza, objeto)
+
+    def insertarRecursion(self, cab, objeto):
+        if cab.getValor()==objeto:
+            print("Elemento ya existente")
+        else:
+            if objeto < cab.getValor():
+                if cab.getIzq() is None:
+                    nodo=Nodo(objeto)
+                    cab.setIzq(nodo)
+                else:
+                    self.insertarRecursion(cab.getIzq(), objeto)
+            else:
+                if objeto > cab.getValor():
+                    if cab.getDer() is None:
+                        nodo=Nodo(objeto)
+                        cab.setDer(nodo)
+                    else:
+                        self.insertarRecursion(cab.getDer(), objeto)  
+    def suprimir(self, valor):
+        if self.__cabeza is None:
+            print("El árbol está vacío. No se puede eliminar el elemento.")
+        else:
+            self.__cabeza = self.suprimirRecursion(self.__cabeza, valor)
+
+    def suprimirRecursion(self, nodo, valor):
+        if nodo is None:
+            print(f"El elemento {valor} no existe en el árbol.")
+        else:
+            if valor < nodo.getValor():
+                nodo.setIzq(self.suprimirRecursion(nodo.getIzq(), valor))
+            elif valor > nodo.getValor():
+                nodo.setDer(self.suprimirRecursion(nodo.getDer(), valor))
+            else:
+                if nodo.getIzq() is None and nodo.getDer() is None:
+                    nodo = None
+                elif nodo.getIzq() is None:
+                    nodo = nodo.getDer()
+                elif nodo.getDer() is None:
+                    nodo = nodo.getIzq()
+                else:
+                    max_izquierdo = self.maximo(nodo.getIzq())
+                    nodo.setValor(max_izquierdo.getValor())
+                    nodo.setIzq(self.suprimirRecursion(nodo.getIzq(), max_izquierdo.getValor()))
+        return nodo
+    def maximo(self, nodo):
+        while nodo.getDer() is not None:
+            nodo = nodo.getDer()
+        return nodo
+    def buscar(self, nodo, valor):
+        if nodo is None:
+            print("Error - Elemento Inexistente")
+        else: 
+            if nodo.getValor() == valor:
+                print("Éxito - Elemento existente")
+            elif valor < nodo.getValor():
+                return self.buscar(nodo.getIzq(), valor)
+            else:
+                return self.buscar(nodo.getDer(), valor)
     
+    def Hoja(self, nodo, valor):
+        if nodo is None:
+            return False
+        elif nodo.getValor() == valor and nodo.getIzq() is None and nodo.getDer() is None:
+            return True
+        else:
+            return self.Hoja(nodo.getIzq(), valor) or self.Hoja(nodo.getDer(), valor)
     
-    def recorrer(self, nodo):
+    def Nivel(self, nodo, valor, nivel_actual):
+        if nodo is None:
+            return -1  # Valor no encontrado
+        if nodo.getValor() == valor:
+            return nivel_actual
+        nivel_izq = self.Nivel(nodo.getIzq(), valor, nivel_actual + 1)
+        if nivel_izq != -1:
+            return nivel_izq
+        nivel_der = self.Nivel(nodo.getDer(), valor, nivel_actual + 1)
+        return nivel_der
+    
+    def preOrden(self, nodo):
         if nodo is not None:
-            self.recorrer(nodo.getIzquierda())
+            self.preOrden(nodo.getIzq())
             print(nodo.getValor())
-            self.recorrer(nodo.getDerecha())
-    
+            self.preOrden(nodo.getDer())
 if __name__== '__main__':
     a=Arbol()
     print(a.getCabeza())
-    a.insertar(10, a.getCabeza())
-    a.recorrer(a.getCabeza())
-    a.insertar(5, a.getCabeza())
-    a.insertar(15, a.getCabeza())
-    a.insertar(1, a.getCabeza())
-    a.insertar(20, a.getCabeza())
+    a.insertar(1)
+    a.insertar(5)
+    a.insertar(15)
+    a.insertar(3)
+    a.insertar(20)
+    a.insertar(9)
+    a.preOrden(a.getCabeza())
     print('--')
-    a.recorrer(a.getCabeza())
+    a.suprimir(1)
+    a.preOrden(a.getCabeza())
+    a.buscar(a.getCabeza(),5)
