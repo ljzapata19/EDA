@@ -136,6 +136,67 @@ if __name__ == "__main__":
 
 print('-------------------------------------------------')
 
+import heapq
+from collections import defaultdict
+
+class NodoHuffman:
+    def __init__(self, caracter, frecuencia):
+        self.caracter = caracter
+        self.frecuencia = frecuencia
+        self.izquierda = None
+        self.derecha = None
+
+    def __lt__(self, otro):
+        return self.frecuencia < otro.frecuencia
+
+def calcular_frecuencias(texto):
+    frecuencias = defaultdict(int)
+    for caracter in texto:
+        frecuencias[caracter] += 1
+    return frecuencias
+
+def construir_arbol_huffman(frecuencias):
+    cola_prioridad = [NodoHuffman(caracter, frecuencia) for caracter, frecuencia in frecuencias.items()]
+    heapq.heapify(cola_prioridad)
+
+    while len(cola_prioridad) > 1:
+        nodo_izq = heapq.heappop(cola_prioridad)
+        nodo_der = heapq.heappop(cola_prioridad)
+        nuevo_nodo = NodoHuffman(None, nodo_izq.frecuencia + nodo_der.frecuencia)
+        nuevo_nodo.izquierda = nodo_izq
+        nuevo_nodo.derecha = nodo_der
+        heapq.heappush(cola_prioridad, nuevo_nodo)
+
+    return cola_prioridad[0]
+
+def generar_codificacion_arbol(arbol_huffman, camino_actual="", codificacion={}):
+    if arbol_huffman is not None:
+        if arbol_huffman.caracter is not None:
+            codificacion[arbol_huffman.caracter] = camino_actual
+        generar_codificacion_arbol(arbol_huffman.izquierda, camino_actual + "0", codificacion)
+        generar_codificacion_arbol(arbol_huffman.derecha, camino_actual + "1", codificacion)
+
+def comprimir_texto(texto, codificacion):
+    bits = ""
+    for caracter in texto:
+        bits += codificacion[caracter]
+    while len(bits) % 8 != 0:
+        bits += "0"  # Asegurarse de que la longitud sea múltiplo de 8
+    bytes_comprimidos = bytes(int(bits[i:i+8], 2) for i in range(0, len(bits), 8))
+    return bytes_comprimidos
+
+if __name__ == "__main__":
+    texto = input("Ingrese el texto que desea comprimir: ")
+
+    frecuencias = calcular_frecuencias(texto)
+    arbol_huffman = construir_arbol_huffman(frecuencias)
+    codificacion = {}
+    generar_codificacion_arbol(arbol_huffman, "", codificacion)
+
+    bytes_comprimidos = comprimir_texto(texto, codificacion)
+
+    print("Texto comprimido:")
+    print(bytes_comprimidos.decode('utf-8'))
 
 
 
