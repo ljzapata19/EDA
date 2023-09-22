@@ -1,0 +1,68 @@
+import heapq
+from collections import defaultdict
+
+class NodoHuffman:
+    def __init__(self, caracter, frecuencia):
+        self.caracter = caracter
+        self.frecuencia = frecuencia
+        self.izquierda = None
+        self.derecha = None
+
+    def __lt__(self, otro):
+        return self.frecuencia < otro.frecuencia
+
+def calcular_frecuencias(archivo):
+    frecuencias = defaultdict(int)
+    with open(archivo, 'r') as archivo_texto:
+        for linea in archivo_texto:
+            for caracter in linea:
+                frecuencias[caracter] += 1
+    return frecuencias
+
+def construir_arbol_huffman(frecuencias):
+    cola_prioridad = [NodoHuffman(caracter, frecuencia) for caracter, frecuencia in frecuencias.items()]
+    heapq.heapify(cola_prioridad)
+
+    while len(cola_prioridad) > 1:
+        nodo_izq = heapq.heappop(cola_prioridad)
+        nodo_der = heapq.heappop(cola_prioridad)
+        nuevo_nodo = NodoHuffman(None, nodo_izq.frecuencia + nodo_der.frecuencia)
+        nuevo_nodo.izquierda = nodo_izq
+        nuevo_nodo.derecha = nodo_der
+        heapq.heappush(cola_prioridad, nuevo_nodo)
+
+    return cola_prioridad[0]
+
+def generar_codificacion_arbol(arbol_huffman, camino_actual="", codificacion={}):
+    if arbol_huffman is not None:
+        if arbol_huffman.caracter is not None:
+            codificacion[arbol_huffman.caracter] = camino_actual
+        generar_codificacion_arbol(arbol_huffman.izquierda, camino_actual + "0", codificacion)
+        generar_codificacion_arbol(arbol_huffman.derecha, camino_actual + "1", codificacion)
+
+def comprimir_archivo(archivo_entrada, archivo_salida, codificacion):
+    with open(archivo_entrada, 'r') as entrada, open(archivo_salida, 'wb') as salida:
+        bits = ""
+        while True:
+            caracter = entrada.read(1)
+            if not caracter:
+                break
+            bits += codificacion[caracter]
+            while len(bits) >= 8:
+                byte = int(bits[:8], 2)
+                bits = bits[8:]
+                salida.write(bytes([byte]))
+
+if __name__ == "__main__":
+    archivo_entrada = "archivo.txt"
+    archivo_salida = "archivo_comprimido.bin"
+
+    frecuencias = calcular_frecuencias(archivo_entrada)
+    arbol_huffman = construir_arbol_huffman(frecuencias)
+    codificacion = {}
+    generar_codificacion_arbol(arbol_huffman, "", codificacion)
+
+    comprimir_archivo(archivo_entrada, archivo_salida, codificacion)
+
+    print("Archivo comprimido exitosamente.")
+    
