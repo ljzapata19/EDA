@@ -59,19 +59,13 @@ if __name__ == "__main__":
 
     frecuencias = calcular_frecuencias(archivo_entrada)
     arbol_huffman = construir_arbol_huffman(frecuencias)
-
     codificacion = {}
-
     generar_codificacion_arbol(arbol_huffman, "", codificacion)
-
-
-
-
     comprimir_archivo(archivo_entrada, archivo_salida, codificacion)
+    print("Archivo comprimido exitosamente.")
 
 
-
-
+print('-------------------------------------------------')
 
 
 
@@ -140,11 +134,43 @@ if __name__ == "__main__":
     print("Texto comprimido exitosamente.")
 
 
+print('-------------------------------------------------')
 
 
 
 
 
 
-    print("Archivo comprimido exitosamente.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
