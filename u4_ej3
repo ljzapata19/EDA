@@ -1,11 +1,11 @@
 from abb import Arbol
 def frontera(a, nodo):
     if nodo is not None:
+        if nodo.getIzq() is None and nodo.getDer() is None:
+            print(nodo.getValor())
         frontera(a, nodo.getIzq())
-        if a.Hoja(a.getCabeza,nodo.getValor()):
-            print(nodo.getValor)
-        
         frontera(a, nodo.getDer())
+        
 if __name__=='__main__':
     a=Arbol()
     a.insertar(12)
