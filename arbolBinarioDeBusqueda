@@ -34,36 +34,7 @@ class Arbol:
     
     def getCabeza(self):
         return self.__cabeza
-    """
-    def insertar(self, X, aux):
-        if aux is None:
-            nuevo_nodo= Nodo(X)
-            aux = nuevo_nodo
-            
-        else:
-            if X == aux.getValor():
-                print('El nodo ya existe')
-            else:
-                if X < aux.getValor():
-                    self.insertar(X, aux.getIzquierda())
-                else:
-                    if X > aux.Valor():
-                        self.insertar(X, aux.getDerecha())
-    
-    def insertar(self, X, aux):
-        if aux is None:
-            nuevo_nodo = Nodo(X)
-            if self.__cabeza is None:
-                self.__cabeza = nuevo_nodo
-            
-        else:
-            if X == aux.getValor():
-                print('El nodo ya existe')
-            elif X < aux.getValor():
-                aux.setIzquierda(self.insertar(X, aux.getIzquierda()))
-            else:
-                aux.setDerecha(self.insertar(X, aux.getDerecha()))
-    """
+
     def insertar(self, objeto):
         if self.__cabeza is None:
             nodo=Nodo(objeto)
@@ -130,6 +101,7 @@ class Arbol:
                 return self.buscar(nodo.getDer(), valor)
     
     def Hoja(self, nodo, valor):
+        print(type(nodo))
         if nodo is None:
             return False
         elif nodo.getValor() == valor and nodo.getIzq() is None and nodo.getDer() is None:
@@ -159,7 +131,6 @@ class Arbol:
         return self.Hijo(nodo.getIzq(), padre_valor, hijo_valor) or self.Hijo(nodo.getDer(), padre_valor, hijo_valor)
 
     def Padre(self, nodo, padre, hijo_valor):
-        
         if nodo is None:
             return None  # Valor no encontrado
         if nodo.getValor() == hijo_valor:
@@ -169,7 +140,16 @@ class Arbol:
             return izquierda
         derecha = self.Padre(nodo.getDer(), nodo, hijo_valor)
         return derecha
-
+    
+    def Padre_a(self, nodo, hijo, padre=None):
+        if nodo is None:
+            return None
+        if nodo.getValor()==hijo :
+            return padre
+        elif hijo < nodo.getValor():
+            return self.Padre(nodo.getIzq(), hijo, padre)
+        else:
+            return self.Padre(nodo.getDer(), hijo, padre)
 
     def Camino(self, inicio_valor, final_valor):
         camino = self.encontrarCamino(self.__cabeza, [], inicio_valor, final_valor)
@@ -201,6 +181,11 @@ class Arbol:
             self.preOrden(nodo.getIzq())
             print(nodo.getValor())
             self.preOrden(nodo.getDer())
+    
+
+
+    
+
 if __name__== '__main__':
     a=Arbol()
     print(a.getCabeza())
@@ -221,3 +206,4 @@ if __name__== '__main__':
     print(f'Padre:  {a.Padre(a.getCabeza(),20,3)}')
     print(f'Camino:  {a.Camino(5,20)}')
     print(f'Altura:  {a.Altura(a.getCabeza())}')
+    a.Padre_Hermano(15)
