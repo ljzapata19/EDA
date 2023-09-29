@@ -1,3 +1,4 @@
+
 class Nodo:
     __valor = int()
     __der = object()
@@ -101,7 +102,6 @@ class Arbol:
                 return self.buscar(nodo.getDer(), valor)
     
     def Hoja(self, nodo, valor):
-        print(type(nodo))
         if nodo is None:
             return False
         elif nodo.getValor() == valor and nodo.getIzq() is None and nodo.getDer() is None:
@@ -141,15 +141,30 @@ class Arbol:
         derecha = self.Padre(nodo.getDer(), nodo, hijo_valor)
         return derecha
     
-    def Padre_a(self, nodo, hijo, padre=None):
+    def buscar_nodo_y_padre(self,nodo,hijo,padre=None):
         if nodo is None:
             return None
         if nodo.getValor()==hijo :
             return padre
         elif hijo < nodo.getValor():
-            return self.Padre(nodo.getIzq(), hijo, padre)
+            return self.buscar_nodo_y_padre(nodo.getIzq(), hijo, padre)
         else:
-            return self.Padre(nodo.getDer(), hijo, padre)
+            return self.buscar_nodo_y_padre(nodo.getDer(), hijo, padre)
+
+
+    def Padre_Hermano(self, cab, hijo):
+        nodo, padre = self.buscar_nodo_y_padre(cab,hijo)
+        if nodo is None:
+            return None,None
+        if padre is None:
+            hermano=None
+        elif nodo == padre.getIzq():
+            hermano=padre.getDer()
+        else:
+            hermano=padre.getIzq()
+        return padre,hermano
+        
+
 
     def Camino(self, inicio_valor, final_valor):
         camino = self.encontrarCamino(self.__cabeza, [], inicio_valor, final_valor)
@@ -206,4 +221,4 @@ if __name__== '__main__':
     print(f'Padre:  {a.Padre(a.getCabeza(),20,3)}')
     print(f'Camino:  {a.Camino(5,20)}')
     print(f'Altura:  {a.Altura(a.getCabeza())}')
-    a.Padre_Hermano(15)
+    padre,hermano = a.Padre_Hermano(a.getCabeza(),5)
