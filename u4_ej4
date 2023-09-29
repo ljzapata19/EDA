@@ -1,0 +1,24 @@
+'''
+Ejercicio Nº4: Usando el mismo objeto de datos del ej. 1, implemente una función para c/u de los siguientes 
+incisos:
+a) Mostrar el nodo padre y el nodo hermano, de un nodo previamente ingresado por teclado; éste puede o no 
+existir en el árbol.
+b) mostrar la cantidad de nodos del árbol en forma recursiva.
+c) Mostrar la altura de un árbol.
+d) Mostrar los sucesores de un nodo ingresado previamente por teclado.
+'''
+
+from abb import Arbol
+    
+if __name__ == '__main__':
+    a=Arbol()
+    print(a.getCabeza())
+    a.insertar(12)
+    a.insertar(5)
+    a.insertar(15)
+    a.insertar(3)
+    a.insertar(20)
+    a.insertar(9)
+    a.preOrden(a.getCabeza())
+    padre=a.Padre_a(a.getCabeza(),5)
+    print(padre)
