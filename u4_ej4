@@ -141,13 +141,14 @@ class arbol:
         return max(izquierda, derecha) + 1
     
     def sucesores(self, valor):
-        nodo = self.buscarRecursion(self.__cabeza, valor)
-        if nodo:
-            sucesores = []
-            self._encontrar_sucesores(nodo, sucesores,valor)
-            return sucesores
+        if self.buscar(self.__cabeza, valor):
+            nodo = self.buscarRecursion(self.__cabeza, valor)
+            if nodo:
+                sucesores = []
+                self._encontrar_sucesores(nodo, sucesores,valor)
+                return sucesores
         else:
-            return []
+            return (f'el valor ingresado no esta en el arbol')
 
     def _encontrar_sucesores(self, nodo, sucesores,valor):
         if nodo:
@@ -186,4 +187,4 @@ print("Cantidad de nodos:", mi_arbol.contar_nodos())
 print("Altura del árbol:", mi_arbol.Altura(cab))
 
 # Mostrar los sucesores de un nodo (ejemplo con nodo 10):
-print("Sucesores de :", mi_arbol.sucesores(10))
+print("Sucesores de :", mi_arbol.sucesores(18))
