@@ -1,0 +1,135 @@
+class Paciente:
+    __nom=str
+    __ap=str
+    __p=int
+    def __init__(self, nom, ap,p):
+        self.__nom=nom
+        self.__ap=ap
+        self.__p=p
+    def getPrioridad(self):
+        return self.__p
+    def __lt__(self, o):
+        return self.__p < o.getPrioridad()
+    def __eq__(self,o):
+        return self.__p==o.getPrioridad()
+class Nodo:
+    __valor = object()
+    __der = object()
+    __izq = object()
+    #agregar grado (cantidad de descendientes que tiene, tener en cuenta que como es bionario tiene orden 2, por lo tanto el grado maximo es 2)
+    def __init__(self, dato, n, a):
+        self.__valor = Paciente(n,a,dato)
+        self.__der = None
+        self.__izq = None
+        
+    def setDer(self, der):
+        self.__der = der
+    
+    def setIzq(self, izq):
+        self.__izq = izq
+    
+    def getDer(self):
+        return self.__der
+    
+    def getIzq(self):
+        return self.__izq
+    
+    def getValor(self):
+        return self.__valor.getPrioridad()
+    
+    def setValor(self, X):
+        self.__valor=X
+    
+class Arbol:
+    __cabeza = None
+    
+    def __init__(self):
+        self.__cabeza = None
+    
+    def getCabeza(self):
+        return self.__cabeza
+
+    def insertar(self, objeto,n,a):
+        if self.__cabeza is None:
+            nodo=Nodo(objeto,n,a)
+            self.__cabeza=nodo
+        else:
+            self.insertarRecursion(self.__cabeza, objeto,n,a)
+
+    def insertarRecursion(self, cab, objeto,n,a):
+        if cab.getValor()==objeto:
+            print("Elemento ya existente")
+        else:
+            if objeto < cab.getValor():
+                if cab.getIzq() is None:
+                    nodo=Nodo(objeto)
+                    cab.setIzq(nodo)
+                else:
+                    self.insertarRecursion(cab.getIzq(), objeto)
+            else:
+                if objeto > cab.getValor():
+                    if cab.getDer() is None:
+                        nodo=Nodo(objeto)
+                        cab.setDer(nodo)
+                    else:
+                        self.insertarRecursion(cab.getDer(), objeto)  
+    def sup(self,valor):
+        if self.__cabeza is None:
+            print("El árbol está vacío. No se puede eliminar el elemento.")
+        else:
+            self.__cabeza = self.suprimirRecursion(self.__cabeza, valor)
+
+    def suprimirRecursion(self, nodo, valor):
+        if nodo is None:
+            print(f"El elemento {valor} no existe en el árbol.")
+        else:
+            if valor < nodo.getValor():
+                nodo.setIzq(self.suprimirRecursion(nodo.getIzq(), valor))
+            elif valor > nodo.getValor():
+                nodo.setDer(self.suprimirRecursion(nodo.getDer(), valor))
+            else:
+                if nodo.getIzq() is None and nodo.getDer() is None:
+                    nodo = None
+                elif nodo.getIzq() is None:
+                    nodo = nodo.getDer()
+                elif nodo.getDer() is None:
+                    nodo = nodo.getIzq()
+                else:
+                    max_izquierdo = self.maximo(nodo.getIzq())
+                    nodo.setValor(max_izquierdo.getValor())
+                    nodo.setIzq(self.suprimirRecursion(nodo.getIzq(), max_izquierdo.getValor()))
+        return nodo
+    def maximo(self):
+        nodo=self.__cabeza
+        while nodo.getDer() is not None:
+            aux=nodo
+            nodo = nodo.getDer()
+        self.sup(aux)
+
+    def buscar(self, nodo, valor):
+        if nodo is None:
+            print("Error - Elemento Inexistente")
+        else: 
+            if nodo.getValor() == valor:
+                print("Éxito - Elemento existente")
+            elif valor < nodo.getValor():
+                return self.buscar(nodo.getIzq(), valor)
+            else:
+                return self.buscar(nodo.getDer(), valor)
+    
+    
+    def preOrden(self, nodo):
+        if nodo is not None:
+            self.preOrden(nodo.getIzq())
+            print(nodo.getValor())
+            self.preOrden(nodo.getDer())
+if __name__== '__main__':
+    a=Arbol()
+    print(a.getCabeza())
+    a.insertar('nom','ape',10)
+    a.insertar('n','a',5)
+    a.insertar('no','ap',15)
+    a.preOrden(a.getCabeza())
+    print('--')
+    a.maximo()
+    a.preOrden(a.getCabeza())
