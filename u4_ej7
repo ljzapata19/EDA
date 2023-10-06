@@ -133,3 +133,163 @@ if __name__== '__main__':
     print('--')
     a.maximo()
     a.preOrden(a.getCabeza())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#OTRA FORMA
+
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Oct  6 12:22:34 2023
+
+@author: ljzap
+"""
+class Paciente:
+    __nom=str
+    __ap=str
+    __p=int
+    def __init__(self, nom, ap,p):
+        self.__nom=nom
+        self.__ap=ap
+        self.__p=p
+        
+    def getPrioridad(self):
+        return self.__p
+    
+    def __lt__(self, o):
+        return self.__p < o.getPrioridad()
+    
+    def __eq__(self,o):
+        return self.__p==o.getPrioridad()
+    
+class nodoArbol:
+    __dato=None
+    __izquierdo=None
+    __derecho=None
+    
+    def __init__(self, dato):
+        self.__dato=dato
+    
+    def setIzquierdo(self,izq):
+        self.__izquierdo=izq
+    
+    def getIzquierdo(self):
+        return self.__izquierdo
+        
+    def setDerecho(self,der):
+        self.__derecho=der
+    
+    def getDerecho(self):
+        return self.__derecho
+    
+    def getDato(self):
+        return self.__dato
+    
+    def setDato(self,dato):
+        self.__dato=dato
+    
+    def __str__(self):
+        return f'{self.__izquierdo.getDato()} <-- {self.__dato} -->{self.__derecho.getDato()}'
+    
+class Arbol_Binario:
+    __raiz=None
+    
+    def __init__(self):
+        self.__raiz=None
+    
+    def getRaiz(self):
+        return self.__raiz
+    
+    def arbol_vacio(self):
+        return self.__raiz is None
+    
+    def insertar(self, n,a,p):
+        dato = Paciente(n, a, p)        
+        self.__raiz = self.insertar_nodo(self.__raiz, dato)
+    
+    def insertar_nodo(self, sub_arbol, dato):
+        if sub_arbol is None:
+            nodo = nodoArbol(dato)
+            sub_arbol = nodo
+        else:
+            if dato < sub_arbol.getDato():
+                sub_arbol.setIzquierdo(self.insertar_nodo(sub_arbol.getIzquierdo(), dato))
+            elif dato > sub_arbol.getDato():
+                sub_arbol.setDerecho(self.insertar_nodo(sub_arbol.getDerecho(), dato))
+            else: 
+                print('El dato ingresado ya exite en el arbol.')
+        return sub_arbol.getDato().getPrioridad()
+    
+    def buscar(self, dato):
+        return self.buscar_nodo(dato) is not None
+    
+    def buscar_nodo(self, dato):
+        actual = None
+        if not self.arbol_vacio():
+            actual = self.__raiz
+            while actual is not None and dato != actual.getDato():
+                if dato < actual.getDato():
+                    actual = actual.getIzquierdo()
+                elif dato > actual.getDato():
+                    actual = actual.getDerecho()
+        return actual
+    
+    def suprimir(self, dato):
+        elemento = 'No se encuentra el dato'
+        posicion = self.buscar_nodo(dato)
+        if posicion is not None:
+            elemento = posicion.getDato()
+            self.__raiz = self.eliminar_nodo(self.__raiz, dato)
+        return elemento
+    
+    def eliminar_nodo(self, sub_arbol, dato):
+        if sub_arbol is None:
+            return None
+        elif dato < sub_arbol.getDato():
+            sub_arbol.setIzquierdo(self.eliminar_nodo(sub_arbol.getIzquierdo(), dato))
+        elif dato > sub_arbol.getDato():
+            sub_arbol.setDerecho(self.eliminar_nodo(sub_arbol.getDerecho(), dato))
+        else:
+            nodo_eliminar = sub_arbol
+            if nodo_eliminar.getDerecho() is None:
+                sub_arbol = nodo_eliminar.getIzquierdo()
+            elif nodo_eliminar.getIzquierdo() is None:
+                sub_arbol = nodo_eliminar.getDerecho()
+            else:
+                max_izquierdo = self.maximo(nodo_eliminar.getIzquierdo())
+                nodo_eliminar.setDato(max_izquierdo.getDato())
+                nodo_eliminar.setIzquierdo(self.eliminar_nodo(nodo_eliminar.getIzquierdo(), max_izquierdo.getDato()))
+        return sub_arbol
+    
+    def maximo(self, nodo):
+        while nodo.getDerecho() is not None:
+            nodo = nodo.getDerecho()
+        return nodo
+    
+    def preOrden(self, nodo):
+        if nodo is not None:
+            print(nodo.getDato())
+            self.preOrden(nodo.getIzquierdo())
+            self.preOrden(nodo.getDerecho())
+
+if __name__== '__main__':
+    a=Arbol_Binario()
+    print(a.getRaiz())
+    a.insertar('nom','ape',10)
+    a.insertar('n','a',5)
+    a.insertar('no','ap',15)
+    a.preOrden(a.getRaiz())
+    print('--')
+    a.maximo()
+    a.preOrden(a.getRaiz())
