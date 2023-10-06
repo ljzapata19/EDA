@@ -65,4 +65,71 @@ clave_a_buscar = random.choice(claves_aleatorias)
 longitud_secuencia = tabla_hash.buscar(clave_a_buscar)
 
 print(f"Clave {clave_a_buscar} encontrada en una secuencia de longitud {longitud_secuencia}")
-  
+
+
+
+
+
+
+
+
+
+
+
+
+import random
+
+class TablaHash:
+    def __init__(self, tamano):
+        self.tamano = tamano        # Tamaño de la tabla Hash
+        self.tabla = [None] * tamano        # Inicializar la tabla con listas vacías para el direccionamiento abierto
+
+    def funcion_hash(self, clave):
+        return clave % self.tamano      # Implementar la función de transformación de claves (método de la división)
+
+    def insertar(self, clave, valor):
+        indice = self.funcion_hash(clave)               # Calcular el índice utilizando la función de hash
+        while self.tabla[indice] is not None:               # Realizar la inserción usando secuencia de prueba lineal
+            indice = (indice + 1) % self.tamano            # Implementar la secuencia de prueba lineal
+        self.tabla[indice] = (clave, valor)        # Insertar el par clave-valor en el índice encontrado
+    def imprime(self):
+        for clave, valor in self.tabla:
+            print(clave, valor)
+    def buscar(self, clave):
+        # Calcular el índice utilizando la función de hash
+        indice = self.funcion_hash(clave)
+
+        # Inicializar la longitud de la secuencia de prueba
+        longitud_secuencia = 0
+
+        # Realizar la búsqueda usando secuencia de prueba lineal
+        while self.tabla[indice] is not None:
+            # Incrementar la longitud de la secuencia
+            longitud_secuencia += 1
+
+            # Verificar si la clave coincide con la que estamos buscando
+            if self.tabla[indice][0] == clave:
+                return longitud_secuencia  # Clave encontrada
+            
+            # Implementar la secuencia de prueba lineal
+            indice = (indice + 1) % self.tamano
+        
+        # La clave no se encuentra en la tabla
+        return -16
+    
+if __name__ == '__main__':
+    # Ejemplo de uso
+    tamanio_tabla = 5
+    tabla_hash = TablaHash(tamanio_tabla)
+
+    for i in range (tamanio_tabla):
+        clave= int(input('Ingresa clave: '))
+        tabla_hash.insertar(clave, "Valor asociado a la clave")
+    tabla_hash.imprime()
+    # Ejemplo de búsqueda y cálculo de longitud de secuencia
+    clave_a_buscar = 5
+    print('La clave a buscar es: ', clave_a_buscar)
+    longitud_secuencia = tabla_hash.buscar(clave_a_buscar)
+
+    print(f"Clave {clave_a_buscar} encontrada en una secuencia de longitud {longitud_secuencia}")
+    
