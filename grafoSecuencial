@@ -1,27 +1,30 @@
+import numpy as np
+
 class GrafoSecuencial:
+    __arreglo = []
+    __vertices = []
+
     def __init__(self, vertices):
-        self.vertices = vertices
-        self.matriz_adyacencia = [[0] * vertices for _ in range(vertices)]
+        v=len(vertices)
+        self.__vertices = vertices
+        self.__arreglo = np.zeros((v,v),dtype=int)
 
-    def agregar_arista(self, inicio, fin):
-        if 0 <= inicio < self.vertices and 0 <= fin < self.vertices:
-            self.matriz_adyacencia[inicio][fin] = 1
-            self.matriz_adyacencia[fin][inicio] = 1
+    def __str__(self):
+        return f'{self.__arreglo}'
 
-    def mostrar_matriz_adyacencia(self):
-        for fila in self.matriz_adyacencia:
-            print(fila)
+    def agregar_arista(self, i, j):
+        i= self.__vertices.index(i)
+        j= self.__vertices.index(j)
+        self.__arreglo[i][j] = 1
 
-# Crear un grafo con 5 vértices
-grafo = GrafoSecuencial(5)
+    def ingreso_entradas(self, entradas):
+        for e in entradas:
+            self.agregar_arista(e[0],e[1])
 
-# Agregar aristas
-grafo.agregar_arista(0, 1)
-grafo.agregar_arista(0, 3)
-grafo.agregar_arista(1, 4)
-grafo.agregar_arista(2, 4)
-grafo.agregar_arista(3, 4)
+if __name__ == '__main__':
+    v=[1,2,3,4,5]
+    entradas = [(1,2),(1,4),(2,5),(3,5),(4,5)]
+    g=GrafoSecuencial(v)
+    g.ingreso_entradas(entradas)
+    print(g)
 
-# Mostrar la matriz de adyacencia
-print("Matriz de Adyacencia:")
-grafo.mostrar_matriz_adyacencia()
