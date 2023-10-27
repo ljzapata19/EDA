@@ -21,10 +21,19 @@ class GrafoSecuencial:
         for e in entradas:
             self.agregar_arista(e[0],e[1])
 
+    def adyacentes(self, u):
+        adyacente= []
+        i = self.__vertices.index(u)
+        for c in self.__vertices:
+            j= self.__vertices.index(c)
+            if self.__arreglo[i][j] == 1:
+                adyacente.append(c)
+        return adyacente
 if __name__ == '__main__':
     v=[1,2,3,4,5]
     entradas = [(1,2),(1,4),(2,5),(3,5),(4,5)]
     g=GrafoSecuencial(v)
     g.ingreso_entradas(entradas)
     print(g)
+    print(g.adyacentes(1))
 
