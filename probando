@@ -1,1 +1,103 @@
+import numpy as np
 
+class GrafoSecuencial:
+    __arreglo = []
+    __vertices = []
+
+    def __init__(self, vertices):
+        v = len(vertices)
+        self.__vertices = vertices
+        self.__arreglo = np.zeros((v, v), dtype=int)
+
+    def __str__(self):
+        return f'{self.__arreglo}'
+
+    def agregar_arista(self, i, j):
+        i = self.__vertices.index(i)
+        j = self.__vertices.index(j)
+        self.__arreglo[i][j] = 1
+
+    def adyacentes(self, u):
+        if u in self.__vertices:
+            i = self.__vertices.index(u)
+            adyacentes = [self.__vertices[j] for j in range(len(self.__vertices)) if self.__arreglo[i][j] == 1]
+            return adyacentes
+        else:
+            return []
+
+    def camino(self, u, v):
+        if u in self.__vertices and v in self.__vertices:
+            i = self.__vertices.index(u)
+            j = self.__vertices.index(v)
+            visited = [False] * len(self.__vertices)
+            path = []
+
+            def dfs(node):
+                visited[node] = True
+                path.append(self.__vertices[node])
+                if node == j:
+                    return True
+                for neighbor in range(len(self.__vertices)):
+                    if self.__arreglo[node][neighbor] == 1 and not visited[neighbor]:
+                        if dfs(neighbor):
+                            return True
+                path.pop()
+                return False
+
+            if dfs(i):
+                return path
+            else:
+                return "Error: No hay camino de u a v"
+        else:
+            return "Error: u o v no están en el grafo"
+
+    def conexo(self):
+        visited = [False] * len(self.__vertices)
+
+        def dfs(node):
+            visited[node] = True
+            for neighbor in range(len(self.__vertices)):
+                if self.__arreglo[node][neighbor] == 1 and not visited[neighbor]:
+                    dfs(neighbor)
+
+        dfs(0)  # Comenzar desde un vértice arbitrario
+
+        return all(visited)
+
+    def aciclico(self):
+        # Realizar una búsqueda en profundidad (DFS) y verificar si se encuentra algún ciclo
+        visited = [False] * len(self.__vertices)
+        stack = [False] * len(self.__vertices]
+
+        def dfs(node):
+            visited[node] = True
+            stack[node] = True
+            for neighbor in range(len(self.__vertices)):
+                if self.__arreglo[node][neighbor] == 1:
+                    if not visited[neighbor]:
+                        if dfs(neighbor):
+                            return True
+                    elif stack[neighbor]:
+                        return True
+            stack[node] = False
+            return False
+
+        for vertex in range(len(self.__vertices)):
+            if not visited[vertex]:
+                if dfs(vertex):
+                    return False
+
+        return True
+
+    # BEA y BEP pueden ser implementados según sea necesario
+
+
+
+g = GrafoSecuencial([1, 2, 3, 4, 5])
+entradas = [(1, 2), (1, 4), (2, 5), (3, 5), (4, 5)]
+g.ingreso_entradas(entradas)
+
+print("Nodos adyacentes a 1:", g.adyacentes(1))
+print("Camino de 1 a 5:", g.camino(1, 5))
+print("El grafo es conexo:", g.conexo())
+print("El grafo es acíclico:", g.aciclico())
