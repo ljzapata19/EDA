@@ -29,6 +29,7 @@ class Pila:
         nueva_celda = Nodo(valor)
         nueva_celda.setSiguiente(self.__tope)
         self.__tope = nueva_celda
+        return(valor)
         
     def eliminar (self):
         if self.vacio():
