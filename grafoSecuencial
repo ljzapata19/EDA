@@ -1,5 +1,6 @@
 import numpy as np
 from cola import Cola
+from pila import Pila
 class GrafoSecuencial:
     __arreglo = []
     __vertices = []
@@ -97,7 +98,23 @@ class GrafoSecuencial:
             return visitados
         else:
             print('El elemento ingresado no se encuentra como vertice')
-                
+    
+    def rep(self):
+        actual = int(input('Ingresa inicial: '))
+        if actual in self.__vertices:
+            pila = Pila()
+            pila.insertar(actual)
+            visitados=[actual]
+            orden_eliminado=[]
+            while not pila.vacio():
+                actual = int(pila.eliminar())
+                orden_eliminado.append(actual)
+                for adyacente in self.adyacentes(actual):
+                    if adyacente not in visitados:
+                        visitados.append(pila.insertar(adyacente))
+            return(orden_eliminado)
+        else:
+            print('El elemento ingresado no se encuentra como vertice')
 
 
 if __name__ == '__main__':
@@ -118,3 +135,4 @@ if __name__ == '__main__':
     print('conexo?',g.conexo())
     print('aciclico?',g.aciclico())
     print(g.rea())
+    print(g.rep())
