@@ -1,0 +1,29 @@
+import numpy as np
+class Nodo:
+    __dato = int()
+    __sig = None
+
+    def __init__(self, d):
+        self.__dato=d
+        self.__sig=None
+    def setSig(self, s):
+        self.__sig=s
+    def getDato(self):
+        return self.__dato
+    def __str__(self):
+        return f'{self.getDato()}'
+class DigrafoEncadenado:
+    __arreglo=[]
+
+    def __init__(self, vertices): 
+        for i in range(len(vertices)):
+            vertices[i]=Nodo(vertices[i])  
+        self.__arreglo = np.array(vertices)
+
+    def imprimir(self):
+        for i in self.__arreglo:
+            print(self.__arreglo[i])
+if __name__=='__main__':
+    v=[1,2,3,4,5]
+    d=DigrafoEncadenado(v)
+    d.imprimir()
