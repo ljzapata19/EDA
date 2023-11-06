@@ -1,0 +1,82 @@
+import numpy as np
+class TablaHash:
+    __tamano= int()
+    __tabla= []
+    def __init__(self, tamano):
+        self.__tamano = tamano       
+        self.__tabla = np.full(tamano, None, dtype=object)      
+        
+    def funcion_hash(self, clave):                                         #metodo de la division
+        return clave % self.__tamano      
+    
+    def analisis_extraccion(self, clave):
+        #suponiendo q los digitos q mas alternan son los ultimos 3
+        clave = str(clave)
+        cant_digitos = 2
+        #cant_digitos = int(input('Ingresa cant de digitos a extraer: '))
+        return clave[-cant_digitos:]
+    
+    def metodo_extraccion(self, clave):                                     #metodo de la extraccion
+        #clave = clave[-3:]  #suponiendo q los digitos q mas alternan son los ultimos 3
+        clave_extraida= self.analisis_extraccion(clave)
+        return self.funcion_hash(int(clave_extraida))
+    
+    def metodo_plegado(self, clave):
+        cant_digitos = len(str(self.__tamano-1))
+        str_clave = str(clave)
+        resto = len(str_clave) % cant_digitos
+        if resto > 0:
+            longitud = len(str_clave) + resto
+            str_clave = str_clave.rjust(longitud , '0')
+        sum = 0
+        for i in range(0, len(str_clave), cant_digitos):
+                part = str_clave[i:i + cant_digitos]
+                sum += int(part)
+        return self.funcion_hash(sum)
+    
+    def metodo_cuadrado_medio(self, clave):
+        cant_digitos = 3
+        #cant_digitos = int(input('Ingresa cant de digitos medios: '))
+        #cant_digitos = len(str(self.__tamano-1))
+        cuadrado = str(clave * clave)
+        centro = (len(cuadrado) - cant_digitos) // 2
+        resultado = int(cuadrado[centro : centro + cant_digitos])
+        return self.funcion_hash(resultado)
+    
+    def metodo_alfanumerico(self, clave):
+        clave = str(clave)
+        sum=0
+        for i in range(len(clave)):
+            sum += int(ord(clave[i])) * (10 ** (i+1))
+        return sum
+    
+
+key1 = 21444
+key2 = 'ROMA'
+table_size = 33  # Tamaño de la tabla hash
+h=TablaHash(table_size)
+print(f"Clave: {key1}")
+
+print(f"Division: {h.funcion_hash(key1)}")
+print(f"Extraccion: {h.metodo_extraccion(key1)}")
+print(f"Plegado: {h.metodo_plegado(key1)}")
+print(f"Cuadrado Medio: {h.metodo_cuadrado_medio(key1)}")
+print(f"Alfanumerico: {h.metodo_alfanumerico(key2)}")
+
+
+
+
+
+
+'''
+def metodo_plegado(self, clave):
+    print('tamaño', self.__tamano)
+    cant_digitos = len(str(self.__tamano-1))
+    print(cant_digitos)
+    sum = 0
+    str_clave = str(clave)
+    for i in range(0, len(str_clave), cant_digitos):
+            part = str_clave[i:i + cant_digitos]
+            sum += int(part)
+    return self.funcion_hash(sum)
+'''
