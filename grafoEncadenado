@@ -1,0 +1,116 @@
+import numpy as np
+
+class Nodo:
+    __valor = int()
+    __sig = None
+    def __init__(self, valor):
+        self.__valor = valor
+        self.__sig = None
+
+    def getValor(self):
+        return self.__valor
+
+    def getSig(self):
+        return self.__sig
+
+    def setSig(self, sig):
+        self.__sig = sig
+class GrafoEncadenado:
+    __arreglo = []
+    __vertices = []
+
+    def __init__(self, vertices):
+        v=len(vertices)
+        self.__vertices = vertices
+        self.__arreglo  = np.full(v, None, dtype=Nodo)
+
+    def __str__(self):
+        return f'{self.__arreglo}'
+
+    def agregar_arista(self, i, j):
+        i= self.__vertices.index(i)
+        if self.__arreglo[i] is None:
+            nodo=Nodo(j)
+            self.__arreglo[i] = nodo
+        else:
+            nodo=Nodo(j)
+            aux = self.__arreglo[i]
+            self.__arreglo[i] = nodo
+            nodo.setSig(aux)
+
+    def ingreso_entradas(self, entradas):
+        for e in entradas:
+            self.agregar_arista(e[0],e[1])
+            self.agregar_arista(e[1],e[0])
+    
+    def adyacentes(self, u):
+        adyacente= []
+        i = self.__vertices.index(u)
+        actual = self.__arreglo[i]
+        while actual:
+            adyacente.append(actual.getValor())
+            actual = actual.getSig()
+        return adyacente
+    
+    def siguientes(self, nodo):
+        siguiente = []
+        i = self.__vertices.index(nodo)
+        actual = self.__arreglo[i]
+        while actual:
+            siguiente.append(actual.getValor())
+            actual = actual.getSig()    
+        return siguiente
+
+    def camino(self, u, v, visitados, camino):
+        visitados.add(u)
+        camino.append(u)
+        if u == v:
+            return camino
+        for nodo in self.siguientes(u):
+            if nodo not in visitados:
+                resultado = self.camino(nodo, v, visitados, camino)
+                if resultado:
+                    return resultado
+        camino.pop()
+        return False
+    
+    def conexo(self):
+        visitados = set()
+        conx = True
+        a=0
+        while conx:
+            visitados.add(a)
+            actual = self.__arreglo[a]
+            i=a
+            while len(self.__vertices[i:]) :
+                conx = self.camino(actual.getValor(), self.__vertice[i], set(), [])
+                i+=1
+             
+            
+            if actual is None:
+                conx=False
+            
+        
+        
+        
+    #def aciclico(self):
+        
+    
+    def imprimir(self):
+        for i in range(len(self.__arreglo)):
+            print('\n e[0]: ',i+1)
+            actual = self.__arreglo[i]
+            while actual:
+                print(actual.getValor())
+                actual = actual.getSig()
+        
+    
+if __name__ == '__main__':
+    v=[1,2,3,4,5]
+    entradas = [(1,2),(1,4),(2,5),(3,5),(4,5)]
+    g=GrafoEncadenado(v)
+    g.ingreso_entradas(entradas)
+    g.imprimir()
+    print('adyacentes: ', g.adyacentes(2))
+    print('camino: ', g.camino(5, 3, set(), []))
+    
