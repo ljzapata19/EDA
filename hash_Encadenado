@@ -1,0 +1,122 @@
+import numpy as np
+class Nodo:
+    __clave=int()
+    __valor=str()
+    __sig = None
+    def __init__(self, clave, valor):
+        self.__clave = clave
+        self.__valor = valor
+        self.__sig = None
+
+    def getClave(self):
+        return self.__clave
+
+    def getValor(self):
+        return self.__valor
+
+    def getSig(self):
+        return self.__sig
+
+    def setSig(self, sig):
+        self.__sig = sig
+        
+        
+class TablaHashEncadenamiento:
+    __tabla = []
+    __tamano = int()
+    
+    def __init__(self, tamano):
+        self.__tamano = tamano       
+        self.__tabla = np.full(tamano, None, dtype=Nodo)  
+            
+    def metodo_plegado(self, clave):
+        cant_digitos = len(str(self.__tamano-1))
+        str_clave = str(clave)
+        resto = len(str_clave) % cant_digitos
+        if resto > 0:
+            longitud = len(str_clave) + resto
+            str_clave = str_clave.rjust(longitud , '0')
+        sum = 0
+        for i in range(0, len(str_clave), cant_digitos):
+                part = str_clave[i:i + cant_digitos]
+                sum += int(part)
+        return sum % self.__tamano
+    
+    def insertar(self, clave, valor):
+        indice = self.metodo_plegado(clave)
+        if self.__tabla[indice] is None:
+            nodo=Nodo(clave, valor)
+            self.__tabla[indice] = nodo
+        else:
+            if not self.buscar(indice, clave):
+                nodo=Nodo(clave, valor)
+                aux = self.__tabla[indice]
+                self.__tabla[indice] = nodo
+                nodo.setSig(aux)
+            else:
+                print('clave repetida')
+
+    def buscar(self,indice, clave):
+        actual = self.__tabla[indice]
+        while actual is not None:
+            if actual.getClave() == clave:
+                return True
+            actual = actual.getSig()
+        return False
+            
+    def longitud_listas(self):
+        for i in range(len(self.__tabla)):
+            long=0
+            actual = self.__tabla[i]
+            while actual:
+                long += 1
+                actual = actual.getSig()
+            print(f'Longitud de la lista con direccion {i} es {long}')
+    
+    def promedio_longitudes(self):
+        suma=0
+        for i in range(len(self.__tabla)):
+            long=0
+            actual = self.__tabla[i]
+            while actual:
+                long += 1
+                actual = actual.getSig()
+            suma += long
+        return suma / self.__tamano
+    
+    def longitudes_variantes(self):
+        prom = self.promedio_longitudes()
+        print('Promedio: ', prom)
+        suma=0
+        for i in range(len(self.__tabla)):
+            long=0
+            actual = self.__tabla[i]
+            while actual:
+                long += 1
+                actual = actual.getSig()
+            diferencia = abs(long - prom)
+            if diferencia <= 3:
+                suma +=1
+        return suma
+                     
+    def imprimir(self):
+        for i in range(len(self.__tabla)):
+            print('\nDireccion: ',i)
+            actual = self.__tabla[i]
+            while actual:
+                print(actual.getClave(), actual.getValor())
+                actual = actual.getSig()
+                
+if __name__ == '__main__':
+    N = 5
+    M = int(N/0.7)
+    tabla_hash = TablaHashEncadenamiento(M)
+    clave = int(input('Ingresa clave: '))
+    while clave!=0:
+        valor = (input('Ingresa valor: '))
+        tabla_hash.insertar(clave, valor)
+        clave = int(input('Ingresa clave: '))
+    tabla_hash.imprimir()
+    tabla_hash.longitud_listas()
+    print('cantidad que registran una longitud que varía en hasta 3 unidades: ',tabla_hash.longitudes_variantes())
+    
