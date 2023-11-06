@@ -1,0 +1,75 @@
+import numpy as np
+class TablaHashDireccionamientoAbierto:
+    __tamano= int()
+    __tabla= []
+    def __init__(self, tamano):
+        self.__tamano = tamano       
+        self.__tabla = np.full(tamano, None, dtype=object)      
+        
+    def funcion_hash(self, clave):                  #metodo de la division
+        return clave % self.__tamano      
+    
+    def pruebaSecuencial(self, clave, i):
+        return (self.funcion_hash(clave)-i)%self.__tamano
+    
+    def insertar(self, clave, valor):
+        clave_repetida = self.buscar(clave)
+        print('clave_repetida',clave_repetida)
+        if not clave_repetida:
+            indice = self.funcion_hash(clave)
+            if self.__tabla[indice] is None:
+                self.__tabla[indice] = (clave, valor)
+            else:
+                i=1            
+                while i<self.__tamano and self.__tabla[indice] is not None:   
+                    indice = self.pruebaSecuencial(clave, i)
+                    i+=1
+                if i < self.__tamano:
+                    self.__tabla[indice] = (clave, valor)
+                else:
+                    print('Tabla llena')
+        else:
+            print('clave ya ingresada')
+     
+    def imprime(self):
+        for i in self.__tabla:
+            print(i)
+    
+    
+    def buscar(self, clave):
+        indice = self.funcion_hash(clave)
+        if self.__tabla[indice] is None:
+            return False
+        else:
+            i=1            
+            while i<self.__tamano and self.__tabla[indice] is not None and self.__tabla[indice][0] != clave:   
+                indice = self.pruebaSecuencial(clave, i)
+                i+=1
+            if i < self.__tamano:
+                return indice
+            return False
+    
+if __name__ == '__main__':
+    N = 5
+    alfa = 0.7
+    M = int(N/alfa)
+    tabla_hash = TablaHashDireccionamientoAbierto(M)
+    '''
+    claves=[16,8,19,4,5]
+    for clave in claves:
+    '''
+    clave = int(input('Ingresa clave: '))
+    while clave!=0:
+        valor = (input('Ingresa valor: '))
+        tabla_hash.insertar(clave, valor)
+        clave = int(input('Ingresa clave: '))
+        
+        
+    print('Imprime')
+    tabla_hash.imprime()
+    
+    print('Buscar 3', tabla_hash.buscar(3))
+    
+    
+    
+    
