@@ -1,13 +1,12 @@
-
 class Nodo:
     __valor = int()
     __der = object()
     __izq = object()
-    #agregar grado (cantidad de descendientes que tiene, tener en cuenta que como es bionario tiene orden 2, por lo tanto el grado maximo es 2)
     def __init__(self, dato):
         self.__valor = dato
         self.__der = None
         self.__izq = None
+        self.__grado = 0
         
     def setDer(self, der):
         self.__der = der
@@ -23,202 +22,201 @@ class Nodo:
     
     def getValor(self):
         return self.__valor
-    
+        
     def setValor(self, X):
         self.__valor=X
     
-class Arbol:
-    __cabeza = None
+    def getGrado(self):
+        if self.__izq != None and self.__der != None:
+            grado = 2
+        elif self.__izq is None and self.__der is None:
+            grado = 0
+        else:
+            grado=1
+        return grado
     
+class ArbolBinarioDeBusqueda:
+    __raiz = None
     def __init__(self):
-        self.__cabeza = None
+        self.__raiz= None
     
-    def getCabeza(self):
-        return self.__cabeza
-
-    def insertar(self, objeto):
-        if self.__cabeza is None:
-            nodo=Nodo(objeto)
-            self.__cabeza=nodo
-        else:
-            self.insertarRecursion(self.__cabeza, objeto)
-
-    def insertarRecursion(self, cab, objeto):
-        if cab.getValor()==objeto:
-            print("Elemento ya existente")
-        else:
-            if objeto < cab.getValor():
-                if cab.getIzq() is None:
-                    nodo=Nodo(objeto)
-                    cab.setIzq(nodo)
-                else:
-                    self.insertarRecursion(cab.getIzq(), objeto)
-            else:
-                if objeto > cab.getValor():
-                    if cab.getDer() is None:
-                        nodo=Nodo(objeto)
-                        cab.setDer(nodo)
-                    else:
-                        self.insertarRecursion(cab.getDer(), objeto)  
-    def suprimir(self, valor):
-        if self.__cabeza is None:
-            print("El árbol está vacío. No se puede eliminar el elemento.")
-        else:
-            self.__cabeza = self.suprimirRecursion(self.__cabeza, valor)
-
-    def suprimirRecursion(self, nodo, valor):
+    def getRaiz(self):
+        return self.__raiz
+    
+    def insertar(self, dato):
+        if self.__raiz is None:
+            self.__raiz = Nodo(dato)
+        else: 
+            self.insertar_recursivo(self.__raiz, dato)
+    
+    def insertar_recursivo(self, nodo, dato):
         if nodo is None:
-            print(f"El elemento {valor} no existe en el árbol.")
+            nodo = Nodo(dato)
+        elif dato == nodo.getValor():
+            print(f'El elemento {dato} ya existe.')
+        elif dato < nodo.getValor():
+            nodo.setIzq(self.insertar_recursivo(nodo.getIzq(), dato))
         else:
-            if valor < nodo.getValor():
-                nodo.setIzq(self.suprimirRecursion(nodo.getIzq(), valor))
-            elif valor > nodo.getValor():
-                nodo.setDer(self.suprimirRecursion(nodo.getDer(), valor))
-            else:
-                if nodo.getIzq() is None and nodo.getDer() is None:
-                    nodo = None
-                elif nodo.getIzq() is None:
-                    nodo = nodo.getDer()
-                elif nodo.getDer() is None:
-                    nodo = nodo.getIzq()
-                else:
-                    max_izquierdo = self.maximo(nodo.getIzq())
-                    nodo.setValor(max_izquierdo.getValor())
-                    nodo.setIzq(self.suprimirRecursion(nodo.getIzq(), max_izquierdo.getValor()))
+            nodo.setDer(self.insertar_recursivo(nodo.getDer(), dato))
         return nodo
+    
     def maximo(self, nodo):
         while nodo.getDer() is not None:
             nodo = nodo.getDer()
         return nodo
-    def buscar(self, nodo, valor):
+    
+    def suprimir(self, dato):
+        if self.__raiz is None:     #el arbol no está vacio
+            print('el arbol esta vacio')
+        else:
+            self.__raiz = self.suprimir_recursivo(self.__raiz, dato)
+    
+    def suprimir_recursivo(self, nodo, dato):
         if nodo is None:
-            print("Error - Elemento Inexistente")
+            print('el elemento no existe')
+        elif dato < nodo.getValor():
+            nodo.setIzq(self.suprimir_recursivo(nodo.getIzq(), dato))
+        elif dato > nodo.getValor():
+            nodo.setDer(self.suprimir_recursivo(nodo.getDer(), dato)) 
+        elif dato == nodo.getValor():
+            grado = nodo.getGrado()
+            if grado == 0:
+                nodo=None
+            elif grado == 1:
+                nodo = nodo.getIzq() or nodo.getDer()
+            elif grado == 2:
+                maximo = self.maximo(nodo.getIzq())
+                nodo.setValor(maximo.getValor())
+                nodo.setIzq(self.suprimir_recursivo(nodo.getIzq(),maximo.getValor()))
+        return nodo
+    
+    def hijo(self, nodo, hijo, padre):
+        if nodo is None:
+            return False
         else: 
-            if nodo.getValor() == valor:
-                print("Éxito - Elemento existente")
-            elif valor < nodo.getValor():
-                return self.buscar(nodo.getIzq(), valor)
-            else:
-                return self.buscar(nodo.getDer(), valor)
-    
-    def Hoja(self, nodo, valor):
-        if nodo is None:
-            return False
-        elif nodo.getValor() == valor and nodo.getIzq() is None and nodo.getDer() is None:
-            return True
-        else:
-            return self.Hoja(nodo.getIzq(), valor) or self.Hoja(nodo.getDer(), valor)
-    
-    def Nivel(self, nodo, valor, nivel_actual):
-        if nodo is None:
-            return -1  # Valor no encontrado
-        if nodo.getValor() == valor:
-            return nivel_actual
-        nivel_izq = self.Nivel(nodo.getIzq(), valor, nivel_actual + 1)
-        if nivel_izq != -1:
-            return nivel_izq
-        nivel_der = self.Nivel(nodo.getDer(), valor, nivel_actual + 1)
-        return nivel_der
-    
-    def Hijo(self, nodo, padre_valor, hijo_valor):
-        if nodo is None:
-            return False
-        if nodo.getValor() == padre_valor:
-            if nodo.getIzq() and nodo.getIzq().getValor() == hijo_valor:
-                return True
-            if nodo.getDer() and nodo.getDer().getValor() == hijo_valor:
-                return True
-        return self.Hijo(nodo.getIzq(), padre_valor, hijo_valor) or self.Hijo(nodo.getDer(), padre_valor, hijo_valor)
-
-    def Padre(self, nodo, padre, hijo_valor):
-        if nodo is None:
-            return None  # Valor no encontrado
-        if nodo.getValor() == hijo_valor:
-            return padre.getValor() if padre else None
-        izquierda = self.Padre(nodo.getIzq(), nodo, hijo_valor)
-        if izquierda:
-            return izquierda
-        derecha = self.Padre(nodo.getDer(), nodo, hijo_valor)
-        return derecha
-    
-    def buscar_nodo_y_padre(self,nodo,hijo,padre=None):
-        if nodo is None:
-            return None
-        if nodo.getValor()==hijo :
-            return padre
-        elif hijo < nodo.getValor():
-            return self.buscar_nodo_y_padre(nodo.getIzq(), hijo, padre)
-        else:
-            return self.buscar_nodo_y_padre(nodo.getDer(), hijo, padre)
-
-
-    def Padre_Hermano(self, cab, hijo):
-        nodo, padre = self.buscar_nodo_y_padre(cab,hijo)
-        if nodo is None:
-            return None,None
-        if padre is None:
-            hermano=None
-        elif nodo == padre.getIzq():
-            hermano=padre.getDer()
-        else:
-            hermano=padre.getIzq()
-        return padre,hermano
+            if nodo.getValor() == padre:
+                if nodo.getIzq() and nodo.getIzq().getValor() == hijo:
+                    return True
+                elif nodo.getDer() and nodo.getDer().getValor() == hijo:
+                    return True
+                else:
+                    return False
+            elif padre < nodo.getValor():
+                return self.hijo(nodo.getIzq(), hijo, padre)
+            elif padre > nodo.getValor():
+                return self.hijo(nodo.getDer(), hijo, padre)
         
-
-
-    def Camino(self, inicio_valor, final_valor):
-        camino = self.encontrarCamino(self.__cabeza, [], inicio_valor, final_valor)
-        if camino:
-            return camino
-
-    def encontrarCamino(self, nodo, camino_actual, inicio_valor, final_valor):
+    def padre(self, nodo, padre, hijo):
+        return self.hijo(nodo, hijo, padre)
+    
+    def nivel(self, nodo, dato, n=1):
         if nodo is None:
-            return None
-        camino_actual.append(nodo.getValor())
-        if nodo.getValor() == final_valor:
-            return camino_actual
-        izquierda = self.encontrarCamino(nodo.getIzq(), camino_actual.copy(), inicio_valor, final_valor)
-        if izquierda:
-            return izquierda
-        derecha = self.encontrarCamino(nodo.getDer(), camino_actual.copy(), inicio_valor, final_valor)
-        return derecha
-
-    def Altura(self, nodo):
+            return f'{dato} No se encuentra en el arbol'
+        else:
+            if dato == nodo.getValor():
+                return n
+            elif dato < nodo.getValor():
+                return self.nivel(nodo.getIzq(), dato, n+1)
+            elif dato > nodo.getValor():
+                return self.nivel(nodo.getDer(), dato, n+1)
+    
+    def hoja(self, nodo, dato):
+        if nodo is None:
+            return 'arbol vacio'
+        else:
+            hoja = self.buscar(nodo, dato)
+            if hoja and hoja.getGrado() == 0:
+                return True
+            else:
+                return False
+    def altura(self, nodo):
         if nodo is None:
             return 0
-        izquierda = self.Altura(nodo.getIzq())
-        derecha = self.Altura(nodo.getDer())
-        return max(izquierda, derecha) + 1
-    
-    
+        else:
+            izquierda = self.altura(nodo.getIzq())
+            derecha = self.altura(nodo.getDer())
+            return max(izquierda, derecha) + 1
+        
+    def camino(self, nodo, inicio, final):
+        if nodo is None:
+            return 'arbol vacio'
+        else:
+            inicio = self.buscar(nodo, inicio)
+            if inicio:
+                return self.encontrar_camino(inicio, final)          
+            
+    def encontrar_camino(self, nodo, final, recorrido=[]):
+        if nodo is None:
+            return 'no hay camino'
+        else:
+            if final == nodo.getValor():
+                recorrido.append(final)
+                return recorrido                
+            elif final < nodo.getValor():
+                recorrido.append(nodo.getValor())
+                return self.encontrar_camino(nodo.getIzq(), final, recorrido)
+            elif final > nodo.getValor():
+                recorrido.append(nodo.getValor())
+                return self.encontrar_camino(nodo.getDer(), final, recorrido)
+
+    def inOrden(self, nodo):
+        if nodo is not None:            
+            self.inOrden(nodo.getIzq())
+            print(nodo.getValor())
+            self.inOrden(nodo.getDer())
+            
     def preOrden(self, nodo):
         if nodo is not None:
-            self.preOrden(nodo.getIzq())
             print(nodo.getValor())
+            self.preOrden(nodo.getIzq())
             self.preOrden(nodo.getDer())
     
-
-
+    def postOrden(self, nodo):
+        if nodo is not None:            
+            self.postOrden(nodo.getIzq())            
+            self.postOrden(nodo.getDer())
+            print(nodo.getValor())
+            
+    def buscar(self,nodo, dato):
+        if nodo is None:
+            return False
+        else: 
+            if nodo.getValor() == dato:
+                return nodo
+            elif dato < nodo.getValor():
+                return self.buscar(nodo.getIzq(), dato)
+            else:
+                return self.buscar(nodo.getDer(), dato)
     
-
+    def frontera(self, nodo):
+        if nodo is not None:
+            self.frontera(nodo.getIzq())
+            if nodo.getGrado() == 0:
+                print(nodo.getValor())
+            self.frontera(nodo.getDer())
+            
 if __name__== '__main__':
-    a=Arbol()
-    print(a.getCabeza())
+    a=ArbolBinarioDeBusqueda()
+    print(a.getRaiz())
     a.insertar(12)
     a.insertar(5)
     a.insertar(15)
     a.insertar(3)
     a.insertar(20)
     a.insertar(9)
-    a.preOrden(a.getCabeza())
-    print('--')
-    a.suprimir(1)
-    a.preOrden(a.getCabeza())
-    a.buscar(a.getCabeza(),5)
-    print(f'Hoja:  {a.Hoja(a.getCabeza(),20)}')
-    print(f'Nivel:  {a.Nivel(a.getCabeza(),15,1)}')
-    print(f'Hijo:  {a.Hijo(a.getCabeza(),12,15)}')
-    print(f'Padre:  {a.Padre(a.getCabeza(),20,3)}')
-    print(f'Camino:  {a.Camino(5,20)}')
-    print(f'Altura:  {a.Altura(a.getCabeza())}')
-    padre,hermano = a.Padre_Hermano(a.getCabeza(),5)
+    a.preOrden(a.getRaiz())
+    print('Suprimir')
+    a.suprimir_recursivo(a.getRaiz(),16)
+    a.preOrden(a.getRaiz())
+    print('---')
+    print(a.getRaiz().getValor())
+    print('---')
+    buscado=a.buscar(a.getRaiz(),9)
+    print(buscado.getValor())
+    print(f'Hijo:  {a.hijo(a.getRaiz(),5,12)}')
+    print(f'Padre:  {a.padre(a.getRaiz(),12,5)}')
+    print(f'Nivel: {a.nivel(a.getRaiz(),9)}')
+    print(f'Hoja: {a.hoja(a.getRaiz(),0)}')
+    print(f'Altura: {a.altura(a.getRaiz())}')
+    print(f'Camino: {a.camino(a.getRaiz(), 12, 3)}')
+    a.frontera(a.getRaiz())
