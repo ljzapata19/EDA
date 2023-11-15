@@ -1,0 +1,98 @@
+class Sudoku:
+    __tablero = None
+    
+    def __init__(self, tablero):
+        self.__tablero = tablero
+    
+    def encontrarCeldaVacia(self):
+        for i in range(4):
+            for j in range(4):
+                if self.__tablero[i][j] == 0:
+                    return i,j
+        return False        # Ninguna celda vacia
+    def validarFila(self, fila, nro):
+        # Verifica si el nro se encuentra en la fila
+        if nro in self.__tablero[fila]:
+             return False
+        else: 
+            return True
+        
+    def validarColumna(self, columna, nro):
+        # Verifica si el nro se encuentra en la columna
+        for i in range(4):
+            if nro == self.__tablero[i][columna]:
+                return False
+        return True
+    
+    def validarBloque(self,fila, columna, nro):
+        #Encuentra posicion inicial del cuadro
+        inicio_cuadro_fila = (fila // 2) * 2
+        inicio_cuadro_columna = (columna // 2) * 2
+        # Verifica si el nro se encuentra en el cuadrado
+        i = inicio_cuadro_fila
+        while i < inicio_cuadro_fila+2:
+            j= inicio_cuadro_columna
+            while j < inicio_cuadro_columna+2:
+                if nro == self.__tablero[i][j]:
+                    return False
+                j += 1
+            i += 1
+        return True
+    
+    def nroValido(self, fila, columna, nro):
+        if self.validarFila(fila, nro) is False or self.validarColumna(columna, nro) is False or self.validarBloque(fila, columna, nro) is False:
+            return False
+        else:
+            return True
+    
+    def resolverSudoku(self):
+        celda_vacia = self.encontrarCeldaVacia()
+        if not celda_vacia:
+            # No hay celdas vacías, el Sudoku está resuelto
+            return True
+
+        fila, columna = celda_vacia
+
+        for numero in range(1, 5):
+            if self.nroValido(fila, columna, numero):
+                # Asignar el número si es válido
+                self.__tablero[fila][columna] = numero
+                # Intentar resolver el resto del Sudoku
+                if self.resolverSudoku():
+                    return True
+
+                # Si la asignación no lleva a una solución válida, backtracking
+                self.__tablero[fila][columna] = 0
+                
+        # No se encontró ningún número válido, retroceder
+        return False
+                
+    def imprimirSudoku(self):
+        for i in range(4):
+            for j in range(4):
+                print(self.__tablero[i][j], end=' ')
+            print()
+            
+            
+            
+if __name__ == '__main__':
+    tablero_inicial = [
+        [3,4,2,0],
+        [2,0,0,0],
+        [4,0,1,2],
+        [0,2,0,4]
+        ]
+ 
+    print('Sudoku a resolver')
+    sudoku = Sudoku(tablero_inicial)
+    sudoku.imprimirSudoku()
+
+    solucion = sudoku.resolverSudoku()
+    if solucion :
+        print('Solución Sudoku')
+        sudoku.imprimirSudoku()
+    else:
+        print('No tiene solución')
+    
+
+    
